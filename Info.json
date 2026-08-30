@@ -1,0 +1,9 @@
+{
+  "Id": "ADOFAITileMeasure",
+  "DisplayName": "ADOFAI Tile Measure",
+  "Author": "kineticnapier",
+  "Version": "0.1.0",
+  "AssemblyName": "ADOFAITileMeasure.dll",
+  "EntryMethod": "KineticNapier.ADOFAITileMeasure.Main.Load",
+  "HomePage": "https://github.com/kineticnapier/ADOFAITileMeasure"
+}
