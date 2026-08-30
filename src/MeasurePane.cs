@@ -90,7 +90,7 @@ namespace KineticNapier.ADOFAITileMeasure
         {
             try
             {
-                scnEditor editor = ADOBase.editor;
+                scnEditor editor = scnEditor.instance != null ? scnEditor.instance : ADOBase.editor;
                 if (editor == null)
                     return MeasureState.Empty("Open the ADOFAI level editor to measure tiles.");
 
@@ -125,7 +125,7 @@ namespace KineticNapier.ADOFAITileMeasure
                 if (fromTransform == null || toTransform == null)
                     return MeasureState.Empty("Could not read tile center positions.");
 
-                scrController controller = ADOBase.controller;
+                scrController controller = scrController.instance != null ? scrController.instance : ADOBase.controller;
                 if (controller == null || controller.tileSize <= 0.000001f)
                     return MeasureState.Empty("Could not read ADOFAI tile size.");
 
