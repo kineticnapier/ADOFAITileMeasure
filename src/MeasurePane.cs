@@ -120,8 +120,8 @@ namespace KineticNapier.ADOFAITileMeasure
                 if (fromFloor == null || toFloor == null || fromId == toId)
                     return MeasureState.Empty("Select a range of at least two tiles.");
 
-                Transform fromTransform = fromFloor.thisTransform != null ? fromFloor.thisTransform : fromFloor.transform;
-                Transform toTransform = toFloor.thisTransform != null ? toFloor.thisTransform : toFloor.transform;
+                Transform fromTransform = fromFloor.thisTransform;
+                Transform toTransform = toFloor.thisTransform;
                 if (fromTransform == null || toTransform == null)
                     return MeasureState.Empty("Could not read tile center positions.");
 
