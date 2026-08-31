@@ -44,6 +44,7 @@ if ([string]::IsNullOrWhiteSpace($WorkbenchDir)) {
 
 $required = @(
     (Join-Path $GameManagedDir "Assembly-CSharp.dll"),
+    (Join-Path $GameManagedDir "RDTools.dll"),
     (Join-Path $GameManagedDir "UnityEngine.CoreModule.dll"),
     (Join-Path $UmmDir "UnityModManager.dll"),
     (Join-Path $WorkbenchDir "ADOFAIWorkbench.dll")
@@ -54,15 +55,23 @@ foreach ($path in $required) {
     }
 }
 
-$msbuild = (Get-Command msbuild.exe -ErrorAction SilentlyContinue).Path
-if (-not $msbuild) {
-    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-    if (Test-Path $vswhere) {
-        $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild `
-            -find "MSBuild\**\Bin\MSBuild.exe" | Select-Object -First 1
+$msbuild = $null
+$msbuildCommand = Get-Command msbuild.exe -ErrorAction SilentlyContinue
+if ($null -ne $msbuildCommand) {
+    $msbuild = $msbuildCommand.Source
+}
+
+if ([string]::IsNullOrWhiteSpace($msbuild)) {
+    $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
+    if (-not [string]::IsNullOrWhiteSpace($programFilesX86)) {
+        $vswhere = Join-Path $programFilesX86 "Microsoft Visual Studio\Installer\vswhere.exe"
+        if (Test-Path $vswhere -PathType Leaf) {
+            $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild `
+                -find "MSBuild\**\Bin\MSBuild.exe" | Select-Object -First 1
+        }
     }
 }
-if (-not $msbuild) {
+if ([string]::IsNullOrWhiteSpace($msbuild)) {
     throw "MSBuild.exe not found. Install Visual Studio Build Tools (.NET desktop build tools)."
 }
 
@@ -71,6 +80,7 @@ Write-Host "Building ADOFAITileMeasure ($Configuration)"
 Write-Host "Managed   : $GameManagedDir"
 Write-Host "UMM       : $UmmDir"
 Write-Host "Workbench : $WorkbenchDir"
+Write-Host "MSBuild   : $msbuild"
 
 & $msbuild $project /t:Rebuild /m /nologo /verbosity:minimal `
     /p:Configuration=$Configuration `
